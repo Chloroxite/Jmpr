@@ -1,0 +1,14 @@
+@import url("reset.css");
+
+body{
+	background-color: black;
+	margin: 1rem;
+}
+
+#terminal{
+	background-color: black;
+	color: rgb(60, 250, 60);
+	font-family: monospace;
+	font-size: 20px;
+	height: 100vh;
+}
