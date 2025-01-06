@@ -3,10 +3,11 @@
 
 
 //why is this not a standard function in javascript........
-let userInput = ""; //Track user input
 let terminal = document.getElementById("terminal");
-let isOutputting = false;
-let playerControl = true;
+let bufferedInput = false; //Flag to let the display code know that there is input buffered
+let isOutputting = false; //Flag for whether or not the display is actively being updated
+let playerControl = true; //Flag for player control, seperate from isOutputting
+let userInput = ""; //Track user input
 let stringBuffer = ""; //track entire screen buffer
 let manpages = { "help": 
 		"Available commands:"
@@ -24,7 +25,7 @@ window.onload = function() {
 
 //user input handling
 function onInput(ev){
-    if(!isOutputting && playerControl){
+    if(playerControl){
         ev.preventDefault(); //prevent hotkeys
         switch(ev.key) {
         case "Enter": //submit userInput
@@ -32,9 +33,12 @@ function onInput(ev){
             userInput = ""; //blank the input buffer.
             break;
         case "Backspace":
-            if(stringBuffer[stringBuffer.length - 1] != ">"){
+            if(userInput.length != 0){
                 userInput = userInput.slice(0, -1);
-                stringBuffer = stringBuffer.slice(0, -1);
+                if(!isOutputting)
+                    stringBuffer = stringBuffer.slice(0, -1);
+                else
+                    bufferedInput = true;
             }
             break;
         case "ArrowUp":
@@ -57,9 +61,13 @@ function onInput(ev){
             break;
         default:
             userInput += ev.key;
-            stringBuffer += ev.key;
+            if(!isOutputting)
+                stringBuffer += ev.key;
+            else
+                bufferedInput = true;
         }
-        terminal.innerText = stringBuffer;
+        if(!isOutputting)
+            terminal.innerText = stringBuffer;
     }
 }
 
@@ -104,7 +112,7 @@ async function terminalBoot(){
 
     await sleep(2000);
 
-    await glitchText("\nJmpr", terminal);
+    await glitchText("\nJmpyr", terminal);
 
     await sleep(1000);
 
@@ -143,6 +151,7 @@ async function gameLoop(){
 
 async function parseCommand(command){
     inputArray = command.split(" ");
+    //TODO: add quotation mark handling...
     let first = inputArray.shift();
     for (i of inputArray){
         console.log(i);
@@ -163,16 +172,21 @@ async function parseCommand(command){
         case "cat":
             //call cat
             break;
+        case "echo":
+            //call echo
+            break;
+        case "fetch":
+            //call fetch
+            break;
         case "clear":
             clearText();
             break;
         case "glitch":
-            await glitchText("\nThis is meant to test glitch text effect weeeeeeeeeeeeeeeeeeee\n");
+            await glitchText("\nThis is meant to test the glitch text effect weeeeeeeeeeeeeeeeeeee\n>");
             break;
         default:
-            await writeText("\n" + first + ": command not found" + "\n");
+            await writeText("\n" + first + ": command not found" + "\n>");
     }
-    stringBuffer += ">";
 }
 
 //Handle user input
