@@ -1,13 +1,13 @@
-import("/entities.js");
 //Storing this unicode character here for later use: █ ©
 //This code makes the game function. There be spoilers...
 
 
 //why is this not a standard function in javascript........
-const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
-let userInput;
+let userInput = ""; //Track user input
+let terminal = document.getElementById("terminal");
 let isOutputting = false;
 let playerControl = true;
+let stringBuffer = ""; //track entire screen buffer
 let manpages = { "help": 
 		"Available commands:"
 		+"\ncd"
@@ -24,14 +24,48 @@ window.onload = function() {
 
 //user input handling
 function onInput(ev){
-    let terminal = document.getElementById("terminal");
-
-    
+    if(!isOutputting && playerControl){
+        ev.preventDefault(); //prevent hotkeys
+        switch(ev.key) {
+        case "Enter": //submit userInput
+            parseCommand(userInput);
+            userInput = ""; //blank the input buffer.
+            break;
+        case "Backspace":
+            if(stringBuffer[stringBuffer.length - 1] != ">"){
+                userInput = userInput.slice(0, -1);
+                stringBuffer = stringBuffer.slice(0, -1);
+            }
+            break;
+        case "ArrowUp":
+            break;
+        case "ArrowDown":
+            break;
+        case "ArrowRight":
+            break;
+        case "ArrowLeft":
+            break;
+        case "Shift":
+            break;
+        case "Meta":
+            break;
+        case "Control":
+            break;
+        case "Alt":
+            break;
+        case "Escape":
+            break;
+        default:
+            userInput += ev.key;
+            stringBuffer += ev.key;
+        }
+        terminal.innerText = stringBuffer;
+    }
 }
 
+//I'm definitely gonna need to fix this function once i'm ready to re-enable it.
 async function terminalBoot(){
-    let terminal = document.getElementById("terminal");
-    let stringBuffer;
+    let tempBuff = "";
     playerControl = false;
 	
     //Begin "boot" sequence
@@ -48,13 +82,13 @@ async function terminalBoot(){
 
     await sleep(5000);
 
-    stringBuffer = 
+    tempBuff = 
         "\n\nCinux OS"
         +"\nCinux Corporation ©3521"
         +"\nKernel version 5.27.01"
         +"\nSYS_ERROR: Filesystem corruption detected! Attempting repairs. This may take some time...";
 
-    await writeText(stringBuffer, terminal);
+    await writeText(tempBuff, terminal);
 
     await sleep(1000);
 
@@ -79,61 +113,66 @@ async function terminalBoot(){
     await sleep(3000);
     clearText(terminal);
 
-    stringBuffer =
+    tempBuff =
         "\nWelcome to Cinux, new user!"
         +"\nEnter your user name:";
 
-    await writeText(stringBuffer, terminal);
+    await writeText(tempBuff, terminal);
     playerControl = true;
 
     gameLoop(); //enter game loop
 }
 
 async function gameLoop(){
-    let terminal = document.getElementById("terminal");
-    let textBuff = terminal.innerText + ">"; //a buffer for working with text.
+    stringBuffer = terminal.innerText + ">"; //a buffer for working with text.
     let tick = 0;
+    let player = new Player(16);
     
-    terminal.innerText = textBuff;
+    terminal.innerText = stringBuffer;
     while(!quit){
-        
-        await sleep(10);
-    }
-}
-
-//write the text out like in those hacking movies.
-async function writeText(string, terminal){
-    let textBuff = terminal.innerText;
-    let charArray = string.split("");
-
-    for (char of charArray){
-        textBuff += char;
-        terminal.innerText = textBuff + "█";
-        await sleep(10);
-    }
-    terminal.innerText = textBuff;
-
-}
-
-//have the text "glitch" onto the screen instead.
-async function glitchText(string, terminal){
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let textBuff = terminal.innerText;
-    
-    for (i = 0; i < string.length; i++){
-        textBuff += string.charAt(i);
-        let textBuff2 = "";
-        for (j = i+1; j < string.length; j++){
-            textBuff2 += chars.charAt(Math.floor(Math.random() * chars.length));
+        tick++;
+        if(!isOutputting){
+            if(Math.floor(tick / 100) % 2 == 0)
+                terminal.innerText = stringBuffer;
+            else
+                terminal.innerText = stringBuffer + "█";
         }
-
-        terminal.innerText = textBuff + textBuff2;
-        await sleep(20);
+        await sleep(10);
     }
 }
 
-async function clearText(terminal){
-    terminal.innerText = "";
+async function parseCommand(command){
+    inputArray = command.split(" ");
+    let first = inputArray.shift();
+    for (i of inputArray){
+        console.log(i);
+    }
+    switch(first){
+        case "cd":
+            //call cd
+            break;
+        case "ls":
+            //call ls
+            break;
+        case "hijack":
+            //call hijack
+            break;
+        case "wget":
+            //call wget
+            break;
+        case "cat":
+            //call cat
+            break;
+        case "clear":
+            clearText();
+            break;
+        case "glitch":
+            await glitchText("\nThis is meant to test glitch text effect weeeeeeeeeeeeeeeeeeee\n");
+            break;
+        default:
+            await writeText("\n" + first + ": command not found" + "\n");
+    }
+    stringBuffer += ">";
 }
 
 //Handle user input
