@@ -150,12 +150,30 @@ async function gameLoop(){
 }
 
 async function parseCommand(command){
-    inputArray = command.split(" ");
-    //TODO: add quotation mark handling...
-    let first = inputArray.shift();
-    for (i of inputArray){
-        console.log(i);
+    inputArray = command.split("");
+    let inputs = [];
+    let index = 0;
+    inputs[index] = ""; //I love javascript...
+    let inQuote = false; //Are we in a quotation?"
+    let buffer = "";
+    let first = "";
+    
+    for (i in inputArray){
+        if(inputArray[i] == "\""){
+            if(!inQuote)
+                inQuote = true;
+            else
+                inQuote = false;
+        }
+        else if(inputArray[i] == " " && !inQuote){
+            index++;
+            inputs[index] = "";
+        }
+        else
+            inputs[index] += inputArray[i];
     }
+    first = inputs.shift();
+
     switch(first){
         case "cd":
             //call cd
@@ -173,7 +191,7 @@ async function parseCommand(command){
             //call cat
             break;
         case "echo":
-            //call echo
+            await writeText("\n" + inputs.shift() + "\n>");
             break;
         case "fetch":
             //call fetch
