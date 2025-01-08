@@ -2,13 +2,13 @@
 //This code makes the game function. There be spoilers...
 
 
-//why is this not a standard function in javascript........
 let terminal = document.getElementById("terminal");
 let bufferedInput = false; //Flag to let the display code know that there is input buffered
 let isOutputting = false; //Flag for whether or not the display is actively being updated
 let playerControl = true; //Flag for player control, seperate from isOutputting
 let userInput = ""; //Track user input
 let stringBuffer = ""; //track entire screen buffer
+let player = new Player(16, "test");
 let manpages = { "help": 
 		"Available commands:"
 		+"\ncd"
@@ -134,7 +134,6 @@ async function terminalBoot(){
 async function gameLoop(){
     stringBuffer = terminal.innerText + ">"; //a buffer for working with text.
     let tick = 0;
-    let player = new Player(16);
     
     terminal.innerText = stringBuffer;
     while(!quit){
@@ -178,14 +177,17 @@ async function parseCommand(command){
         case "cd":
             //call cd
             break;
+        case "pwd":
+            await writeText("\n" + player.cwd + "\n>");
+            break;
         case "ls":
             //call ls
             break;
         case "hijack":
             //call hijack
             break;
-        case "wget":
-            //call wget
+        case "dl":
+            //call download
             break;
         case "cat":
             //call cat
