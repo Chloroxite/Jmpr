@@ -1,17 +1,17 @@
-class Player{
-    #max = 0;
-    #unleaked = 0;
-    #free = 0;
-    #currentHost = "";
-    #playerName = "";
-    #cwd = "";
-    #inv = null;
-    #reach = 0;
-    #status = "";
-    #permissionLevel = 0;
-    #fileSystem = {};
+class Player {
+    #max;
+    #unleaked;
+    #free;
+    #currentHost;
+    #playerName;
+    #cwd;
+    #inv;
+    #reach;
+    #status;
+    #permissionLevel;
+    #fileSystem;
 
-    constructor(memory, name){
+    constructor(memory, name) {
         this.#max = memory; //Hard cap
         this.#unleaked = memory; //Soft cap
         this.#free = memory; //Current memory (these values will act as health)
@@ -22,13 +22,11 @@ class Player{
         this.#reach = 1;
         this.#status = "none";
         this.#permissionLevel = 1;
-        this.#fileSystem = {
-            "testDir":{},
-            ".config":{}
-        };
+        this.#fileSystem = new fileTree(new file("root", "dir", 1, null));
+        this.#fileSystem.index.pushChild(new file("testfile", "file", 1, this.#fileSystem.index));
     }
 
-    get memory(){
+    get memory() {
         return {
             max: this.#max,
             unleaked: this.#unleaked,
@@ -36,47 +34,82 @@ class Player{
         }
     }
 
-    get stats(){ 
-        return{
+    get stats() {
+        return {
             inv: this.#inv,
             reach: this.#reach,
             permLvl: this.#permissionLevel = 1
         }
     }
 
-    get host(){ return this.#currentHost; };
-    get cwd(){ return this.#cwd; };
+    get host() { return this.#currentHost; };
+    get cwd() { return this.#cwd; };
 
 
-    invSlot(slot){ return inv[slot]; }
+    invSlot(slot) { return inv[slot]; }
 }
 
-class fileTree{
-    constructor(root){
-        this.root = root;
-        this.index = root;
+class fileTree {
+    #root;
+    #index;
+    constructor(root) {
+        this.#root = root;
+        this.#index = root;
     }
-    
-    get root(){ return this.root; };
-    get index(){ return this.index; };
+    //Getters
+    get root() { return this.#root; };
+    get index() { return this.#index; };
+
+    //Setters
+    set root(r) { this.#root = r; };
+    set index(i) { this.#index = i; };
+
+    //methods
+
 }
 
-class file{
-    constructor(name, type, permLevel){
-        this.name = name;
-        this.type = type;
-        this.permLevel = permLevel;
-        this.children = {};
-        this.parent = null;
+class file {
+    #name;
+    #type;
+    #permLevel;
+    #children;
+    #parent;
+    constructor(name, type, permLevel, parent) {
+        this.#name = name;
+        this.#type = type;
+        this.#permLevel = permLevel;
+        this.#children = [];
+        this.#parent = parent;
     }
 
-    get name(){ return this.name; };
-    get type(){ return this.type; };
-    get permLevel(){ return this.permLevel; };
-    get parent(){ return this.parent; };
-    get children(){ return this.children; };
+    //getters
+    get name() { return this.#name; };
+    get type() { return this.#type; };
+    get permLevel() { return this.#permLevel; };
+    get parent() { return this.#parent; };
+    get children() { return this.#children; };
+
+    //setters
+    set name(n) { this.#name = n; };
+    set type(t) { this.#type = t; };
+    set permLevel(pl) { this.#permLevel = pl; };
+    set parent(p) { this.#parent = p; };
+    set children(c) { this.#children = c; };
+
+    //method functions
+    pushChild(child) {
+        this.#children.push(child);
+    }
+
+    popChild() {
+        return this.#children.pop();
+    }
+
+    shiftChild() {
+        return this.#children.shift();
+    }
 }
 
-class Host{
+class Host {
     //constructor(programs, 
 }
