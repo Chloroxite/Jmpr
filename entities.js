@@ -10,6 +10,7 @@ class Player {
     #status;
     #permissionLevel;
     #fileSystem;
+    #hostFS;
 
     constructor(memory, name) {
         this.#max = memory; //Hard cap
@@ -22,8 +23,10 @@ class Player {
         this.#reach = 1;
         this.#status = "none";
         this.#permissionLevel = 1;
-        this.#fileSystem = new fileTree(new file("root", "dir", 1, null));
+        this.#fileSystem = new objTree(new file("root", "dir", 1, null)); //stores the players filesystem.
         this.#fileSystem.index.pushChild(new file("testfile", "file", 1, this.#fileSystem.index));
+        this.#fileSystem.index.pushChild(new file(".conf", "folder", 1, this.#fileSystem.index));
+        this.#hostFS = this.#fileSystem; //Stores the host computer's filesystem.
     }
 
     get memory() {
@@ -42,14 +45,23 @@ class Player {
         }
     }
 
+    //getters
     get host() { return this.#currentHost; };
     get cwd() { return this.#cwd; };
+    get fileSystem() { return this.#fileSystem; };
+    get hostFS() { return this.#hostFS; };
+
+    //setters
+    set host(newHost) { return this.#currentHost = newHost; };
+    set cwd(newDir) { return this.#cwd = newDir; };
+    set fileSystem(newFS) { this.#fileSystem = newFS; };
+    set hostFS(newFS) { this.#hostFS = newFS; };
 
 
     invSlot(slot) { return inv[slot]; }
 }
 
-class fileTree {
+class objTree {
     #root;
     #index;
     constructor(root) {
