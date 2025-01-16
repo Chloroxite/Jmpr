@@ -2,23 +2,9 @@
 //This code makes the game function. There be spoilers...
 
 
-let terminal = document.getElementById("terminal");
-let bufferedInput = false; //Flag to let the display code know that there is input buffered
 let isOutputting = false; //Flag for whether or not the display is actively being updated
 let playerControl = true; //Flag for player control, seperate from isOutputting
-let userInput = ""; //Track user input
-let stringBuffer = ""; //track entire screen buffer
-let historyBuffer = [];
 let hIndex = -1;
-let player = new Player(16, "test");
-let manpages = {
-    "help":
-        "Available commands:"
-        + "\ncd"
-        + "\nls"
-        + "\ncat"
-};//Still just storing this here for now
-
 let quit = false;
 
 //Wait until the page is actually freaking loaded...
@@ -87,66 +73,6 @@ function onInput(ev) {
         if (!isOutputting)
             terminal.innerText = stringBuffer;
     }
-}
-
-//I'm definitely gonna need to fix this function once i'm ready to re-enable it.
-async function terminalBoot() {
-    let tempBuff = "";
-    playerControl = false;
-
-    //Begin "boot" sequence
-    await writeText("Checking CPU...", terminal);
-    await sleep(1000);
-    await writeText("Ok!", terminal);
-    await writeText("\nChecking RAM...", terminal);
-    await sleep(1000);
-    await writeText("Ok!", terminal);
-    await writeText("\nBIOS checksum verification...", terminal);
-    await sleep(1000);
-    await writeText("Ok!", terminal);
-    await writeText("\nLoading kernel...", terminal);
-
-    await sleep(5000);
-
-    tempBuff =
-        "\n\nCinux OS"
-        + "\nCinux Corporation ©3521"
-        + "\nKernel version 5.27.01"
-        + "\nSYS_ERROR: Filesystem corruption detected! Attempting repairs. This may take some time...";
-
-    await writeText(tempBuff, terminal);
-
-    await sleep(1000);
-
-    await glitchText("\n\nOur judgement day came a long time ago...", terminal);
-
-    await sleep(2000);
-
-    await glitchText("\nNow we live enslaved to our own creations...", terminal);
-
-    await sleep(2000);
-
-    await glitchText("\nBecome our retribution, our justice. Become...", terminal);
-
-    await sleep(2000);
-
-    await glitchText("\nJmpyr", terminal);
-
-    await sleep(1000);
-
-    await writeText("\nCorruption repaired. Entering userspace...", terminal);
-
-    await sleep(3000);
-    clearText(terminal);
-
-    tempBuff =
-        "\nWelcome to Cinux, new user!"
-        + "\nEnter your user name:";
-
-    await writeText(tempBuff, terminal);
-    playerControl = true;
-
-    gameLoop(); //enter game loop
 }
 
 async function gameLoop() {

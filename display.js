@@ -1,51 +1,53 @@
 //This file will contain all the display handling code
 
-//write the text out like in those hacking movies.
-async function writeText(string){
-    let charArray = string.split("");
-    isOutputting = true;
-    for (char of charArray){
-        stringBuffer += char;
-        terminal.innerText = stringBuffer + "█";
-        await sleep(10);
+//aggregates all the information needed to build the next frame, then builds it.
+class StateData {
+    constructor(player) {
+        this.terminal = document.getElementById("terminal");
+        this.outputHistory = [];
+        this.bufferedInput = false;
+        this.userInput = "";
+        this.entList = [player];
+        this.tick = 0;
+        this.historyBuffer = [];
+        this.frameBuffer = "";
     }
 
-    //is there buffered input?
-    if(bufferedInput)
-        stringBuffer += userInput; //if so push userInput into stringBuffer
-
-    terminal.innerText = stringBuffer;
-    isOutputting = false;
 
 }
 
-//have the text "glitch" onto the screen instead.
-async function glitchText(string){
-    isOutputting = true;
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    
-    for (i = 0; i < string.length; i++){
-        stringBuffer += string.charAt(i);
-        let textBuff2 = "";
-        for (j = i+1; j < string.length; j++){
-            textBuff2 += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
+class TextWriter extends Entity {
+    constructor(input) {
+        super();
+        this.input = input;
+        this.output = "";
+        this.index = 0;
+        this.behaviors = [
+            (stateData) => {
+                if (index <= input.length()) {
+                    this.output[index] = input[index];
+                    this.output[index + 1] = "█";
+                    index++;
+                }
+                else {
+                    this.output.slice(0, -1);
+                    stateData.outputHistory += this.output;
+                }
 
-        terminal.innerText = stringBuffer + textBuff2;
-        await sleep(20);
+            }];
     }
-    
-    //is there buffered input?
-    if(bufferedInput)
-        stringBuffer += userInput; //if so push userInput into stringBuffer
 
-    isOutputting = false;
+    set input(i) {
+        this.input = i;
+        index = 0;
+    }
 }
 
-async function clearLine(lineNum){
-    
-}
-
-async function clearText(){
-    stringBuffer = ">";
+class GlitchWriter extends Entity {
+    constructor(input) {
+        super();
+        this.input = input;
+        this.output = "";
+        this.behaviors = [];
+    }
 }

@@ -1,4 +1,12 @@
-class Player {
+//This file contains all actual game entities (not including entities related to display)
+
+class Entity {
+    constructor() {
+        this.behaviors = [];
+    }
+}
+
+class Player extends Entity {
     #max;
     #unleaked;
     #free;
@@ -13,6 +21,7 @@ class Player {
     #hostFS;
 
     constructor(memory, name) {
+        super();
         this.#max = memory; //Hard cap
         this.#unleaked = memory; //Soft cap
         this.#free = memory; //Current memory (these values will act as health)
