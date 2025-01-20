@@ -1,11 +1,17 @@
 //Storing this unicode character here for later use: █ ©
 //This code makes the game function. There be spoilers...
 
-
-let isOutputting = false; //Flag for whether or not the display is actively being updated
-let playerControl = true; //Flag for player control, seperate from isOutputting
+let player = new Player(16, "PersonMcDavid");
+let worldState = new StateData(player);
+let displayState = new DisplayData(worldState);
+let textWriter = new TextWriter();
+let uiBox = new UserInputBox();
+let playerControl = true; //Flag for player control
 let hIndex = -1;
 let quit = false;
+
+displayState.entList.push(textWriter);
+displayState.entList.push(uiBox);
 
 //Wait until the page is actually freaking loaded...
 window.onload = function() {
@@ -18,32 +24,28 @@ function onInput(ev) {
         ev.preventDefault(); //prevent hotkeys
         switch (ev.key) {
             case "Enter": //submit userInput
-                parseCommand(userInput);
+                parseCommand(worldState.userInput);
                 if (hIndex == -1) //make sure we don't push a previously entered and unaltered command onto the buffer.
-                    historyBuffer.push(userInput); //shove the user input buffer into the history buffer.
+                    worldState.inputHistory.push(worldState.userInput); //shove the user input buffer into the history buffer.
+                displayState.outputHistory.push("\n>" + worldState.userInput); //and into the output buffer too, for displaying
                 hIndex = -1; //set history index to -1
-                userInput = ""; //blank the input buffer.
+                worldState.userInput = ""; //blank the input buffer.
                 break;
             case "Backspace":
-                if (userInput.length != 0) {
-                    userInput = userInput.slice(0, -1);
-                    if (!isOutputting)
-                        stringBuffer = stringBuffer.slice(0, -1);
-                    else
-                        bufferedInput = true;
-                }
+                if (worldState.userInput.length != 0)
+                    worldState.userInput = worldState.userInput.slice(0, -1);
                 hIndex = -1; //reset history index
                 break;
             case "ArrowUp":
-                if (hIndex < historyBuffer.length) {
+                if (hIndex < worldState.inputHistory.length) {
                     hIndex++;
-                    userInput = historyBuffer[hIndex];
+                    worldState.userInput = worldState.inputHistory[hIndex];
                 }
                 break;
             case "ArrowDown":
                 if (hIndex > 0) {
                     hIndex--;
-                    userInput = historyBuffer[hIndex];
+                    worldState.userInput = worldState.inputHistory[hIndex];
                 }
                 break;
             case "ArrowRight":
@@ -63,32 +65,18 @@ function onInput(ev) {
             case "Escape":
                 break;
             default:
-                userInput += ev.key;
-                if (!isOutputting)
-                    stringBuffer += ev.key;
-                else
-                    bufferedInput = true;
+                worldState.userInput += ev.key;
                 hIndex = -1; //reset history index
         }
-        if (!isOutputting)
-            terminal.innerText = stringBuffer;
     }
 }
 
 async function gameLoop() {
-    stringBuffer = terminal.innerText + ">"; //a buffer for working with text.
-    let tick = 0;
-
-    terminal.innerText = stringBuffer;
     while (!quit) {
-        tick++;
-        if (!isOutputting) {
-            if (Math.floor(tick / 100) % 2 == 0)
-                terminal.innerText = stringBuffer;
-            else
-                terminal.innerText = stringBuffer + "█";
-        }
-        await sleep(10);
+        if (worldState.cmdSuccessful == true) //if the player has made a move, cycle the simulation once.
+            worldState.tickSim();
+        displayState.buildFrame();
+        await sleep(16);
     }
 }
 

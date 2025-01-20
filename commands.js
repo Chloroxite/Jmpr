@@ -30,10 +30,10 @@ async function parseCommand(command) {
             //call cd
             break;
         case "ls":
-            await ls(inputs.shift());
+            worldState.cmdSuccessful = await ls(inputs.shift());
             break;
         case "pwd":
-            await writeText("\n" + player.cwd + "\n>");
+            textWriter.setInput(player.cwd);
             break;
         case "ls":
             //call ls
@@ -48,10 +48,10 @@ async function parseCommand(command) {
             //call cat
             break;
         case "echo":
-            await writeText("\n" + inputs.shift() + "\n>");
+            textWriter.setInput("\n" + inputs.shift());
             break;
         case "lostest":
-            await writeText("\n" + await lineOfSight(inputs.shift(), inputs.shift(), inputs.shift()) + "\n>");
+            textWriter.setInput("\n" + await lineOfSight(inputs.shift(), inputs.shift(), inputs.shift()));
             break;
         case "fetch":
             //call fetch
@@ -60,10 +60,10 @@ async function parseCommand(command) {
             clearText();
             break;
         case "glitch":
-            await glitchText("\nThis is meant to test the glitch text effect weeeeeeeeeeeeeeeeeeee\n>");
+            //call textglitcher when its done
             break;
         default:
-            await writeText("\n" + first + ": command not found" + "\n>");
+            textWriter.setInput("\n" + first + ": command not found");
     }
 }
 
