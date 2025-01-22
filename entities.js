@@ -2,7 +2,7 @@
 
 class StateData {
     constructor(player) {
-        this.inputHistory = [];
+        this.inputHistory = [""];
         this.bufferedInput = false;
         this.userInput = "";
         this.entList = [player];

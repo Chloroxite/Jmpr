@@ -38,7 +38,10 @@ class UserInputBox extends Entity {
         this.tick = 0;
         this.behaviors = [
             (displayData) => {
-                this.output = "\n>" + displayData.stateData.userInput;
+                if (displayData.outputHistory.length != 1)
+                    this.output = "\n>" + displayData.stateData.userInput;
+                else
+                    this.output = ">" + displayData.stateData.userInput;
                 if (this.tick <= 50)
                     this.output += "█";
 

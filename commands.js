@@ -57,7 +57,7 @@ async function parseCommand(command) {
             //call fetch
             break;
         case "clear":
-            clearText();
+            displayState.outputHistory = [""];
             break;
         case "glitch":
             //call textglitcher when its done
