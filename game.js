@@ -26,13 +26,17 @@ function onInput(ev) {
             case "Enter": //submit userInput
                 displayState.outputHistory.push("\n>" + worldState.userInput); //shove userInput into output buffer, for displaying
                 parseCommand(worldState.userInput);
-                worldState.inputHistory.unshift(""); //shove the user input buffer into the history buffer.
+                if (hIndex != 0)
+                    worldState.inputHistory[0] = worldState.userInput;
+                worldState.inputHistory.unshift("");
                 hIndex = 0; //set history index to 0
                 worldState.userInput = ""; //blank the input buffer.
                 break;
             case "Backspace":
                 if (worldState.userInput.length != 0) {
                     worldState.userInput = worldState.userInput.slice(0, -1);
+                    worldState.inputHistory[0] = worldState.inputHistory[0].slice(0, -1);
+                    hIndex = 0;
                 }
                 break;
             case "ArrowUp":
@@ -65,11 +69,17 @@ function onInput(ev) {
                 break;
             default:
                 worldState.userInput += ev.key;
+                worldState.inputHistory[0] = worldState.userInput;
+                hIndex = 0;
         }
     }
 }
 
 async function gameLoop() {
+    //remove this after we get done testing it.
+
+
+
     while (!quit) {
         if (worldState.cmdSuccessful == true) //if the player has made a move, cycle the simulation once.
             worldState.tickSim();

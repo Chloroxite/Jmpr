@@ -7,6 +7,7 @@ class DisplayData {
         this.terminal = document.getElementById("terminal");
         this.outputHistory = ["testing1", "\ntesting2"];
         this.frameBuffer = "";
+        this.htmlBuffer = ""; //Seperated mostly for safety reasons. ONLY USE FOR UI WITH LIMITED USER INTERACTION!!
         this.entList = [];
     }
 
@@ -25,9 +26,11 @@ class DisplayData {
         //add user's current input to the buffer
         //this.frameBuffer += "\n>" + this.statedata.userInput;
 
-        //push the framebuffer into the display
+        //push the framebuffers into the display
+        this.terminal.innerHTML = this.htmlBuffer; //If user-typed input has entered this buffer, you're doing something wrong.
         this.terminal.innerText = this.frameBuffer;
         this.frameBuffer = "";
+        this.htmlBuffer = "";
     }
 }
 
