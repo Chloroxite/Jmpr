@@ -3,9 +3,7 @@
 class AudioSys {
     constructor() {
         //begin loading audio assets (stored in sounds and music folders respectively)
-        audioContext;
-        offlineContext = new OfflineAudioContext(2, 44100 * 40, 44100);
-
+        audioContext = new AudioContext(2, 44100 * 40, 44100);
     }
 
     async loadSounds() {

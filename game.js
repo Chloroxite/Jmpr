@@ -1,9 +1,11 @@
 //Storing this unicode character here for later use: █ ©
 //This code makes the game function. There be spoilers...
 
+//initialize
 let player = new Player(16, "PersonMcDavid");
 let worldState = new StateData(player);
 let displayState = new DisplayData(worldState);
+let audioSys = new AudioSys();
 let textWriter = new TextWriter();
 let uiBox = new UserInputBox();
 let playerControl = true; //Flag for player control
@@ -15,7 +17,13 @@ displayState.entList.push(uiBox);
 
 //Wait until the page is actually freaking loaded...
 window.onload = function() {
-    gameLoop(); //Remember to set this back to terminalBoot when it's ready
+    window.addEventListener("click", () => {
+        if (audioSys.audioContext.state === "suspended") {
+            audioSys.audioContext.resume();
+            gameLoop();
+        }
+    }
+    ); //WebAudio API requires user interaction to start. Figures.
 }
 
 //user input handling
